@@ -1,43 +1,86 @@
 {
-  "name": "physical-experiment-demo",
-  "version": "0.1.0",
-  "private": true,
-  "dependencies": {
-    "@testing-library/jest-dom": "^5.11.4",
-    "@testing-library/react": "^11.1.0",
-    "@testing-library/user-event": "^12.1.10",
-    "@types/jest": "^26.0.15",
-    "@types/node": "^12.0.0",
-    "@types/react": "^16.9.53",
-    "@types/react-dom": "^16.9.8",
-    "react": "^17.0.1",
-    "react-dom": "^17.0.1",
-    "react-scripts": "4.0.1",
-    "typescript": "^4.0.3",
-    "web-vitals": "^0.2.4"
-  },
-  "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
-  },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
+    "name": "physical-experiment-demo",
+    "version": "0.1.0",
+    "private": true,
+    "dependencies": {
+        "@ant-design/icons": "^4.4.0",
+        "@rematch/core": "^2.0.0",
+        "@testing-library/jest-dom": "^5.11.4",
+        "@testing-library/react": "^11.1.0",
+        "@testing-library/user-event": "^12.1.10",
+        "@types/react-redux": "^7.1.16",
+        "@types/stats.js": "^0.17.0",
+        "antd": "^4.11.2",
+        "react": "^17.0.1",
+        "react-dom": "^17.0.1",
+        "react-redux": "^7.2.2",
+        "react-scripts": "4.0.1",
+        "stats.js": "^0.17.0",
+        "web-vitals": "^0.2.4"
+    },
+    "scripts": {
+        "start": "cross-env PORT=3006 REACT_APP_API=development react-scripts start",
+        "build": "cross-env REACT_APP_API=production OUTPUT=prod react-scripts build",
+        "test": "react-scripts test",
+        "eject": "react-scripts eject",
+        "tag": "git add . && git commit -m \"添加版本号\"",
+        "build:cs": "cross-env REACT_APP_API=development OUTPUT=cs react-scripts build",
+        "build:test": "cross-env REACT_APP_API=test OUTPUT=test react-scripts build",
+        "build:uat": "cross-env REACT_APP_API=uat OUTPUT=uat react-scripts build",
+        "build:dev_prod": "cross-env REACT_APP_API=dev_prod OUTPUT=dev_prod react-scripts build",
+        "push": "release-it init",
+        "lint": "eslint \"**/*.{js,ts,tsx}\"",
+        "lint-rep": "eslint \"**/*.{js,ts,tsx}\" -o ./eslint-report.txt",
+        "lint-fix": "eslint --fix \"**/*.{js,ts,tsx}\" && stylelint --fix \"**/*.{scss,css,less}\"",
+        "style-lint": "stylelint \"**/*.{scss, css, less}\"",
+        "style-lint-rep": "stylelint \"**/*.{css,less,scss}\" -o style-lint-report.txt",
+        "style-lint-fix": "stylelint --fix \"**/*.{css,less,scss}\""
+    },
+    "eslintConfig": {
+        "extends": [
+            "react-app",
+            "react-app/jest",
+            "plugin:react-hooks/recommended"
+        ],
+        "cache": false
+    },
+    "browserslist": {
+        "production": [
+            ">0.2%",
+            "not dead",
+            "not op_mini all"
+        ],
+        "development": [
+            "last 1 chrome version",
+            "last 1 firefox version",
+            "last 1 safari version"
+        ]
+    },
+    "devDependencies": {
+        "@types/jest": "^26.0.15",
+        "@types/node": "^12.0.0",
+        "@types/react": "^16.9.53",
+        "@types/react-dom": "^16.9.8",
+        "@typescript-eslint/eslint-plugin": "^4.14.2",
+        "@typescript-eslint/parser": "^4.14.2",
+        "babel-eslint": "^10.1.0",
+        "cross-env": "^7.0.3",
+        "eslint": "^7.14.0",
+        "eslint-plugin-react-hooks": "^4.2.0",
+        "node-sass": "4.x",
+        "react-app-rewired": "^2.1.8",
+        "release-it": "^14.2.2",
+        "stylelint": "^13.9.0",
+        "stylelint-config-sass-guidelines": "^7.1.0",
+        "stylelint-config-standard": "^20.0.0",
+        "typescript": "^4.0.3"
+    },
+    "eslintIgnore": [
+        "serviceWorker.js",
+        "setupTests.js",
+        "tag.js",
+        "config-overrides.js",
+        "reportWebVitals.js",
+        "build/"
     ]
-  },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
-  }
 }

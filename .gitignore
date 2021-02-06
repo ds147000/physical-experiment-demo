@@ -21,3 +21,10 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+
+._*
+
+eslint-report.txt
+style-lint-report.txt
+.eslintcache

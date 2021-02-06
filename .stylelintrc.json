@@ -1,0 +1,21 @@
+{
+    "extends": [
+        "stylelint-config-standard",
+        "stylelint-config-sass-guidelines"
+    ],
+    "rules": {
+        "at-rule-no-vendor-prefix": true,
+        "block-no-empty": true,
+        "block-opening-brace-space-before": "always",
+        "declaration-bang-space-after": "never",
+        "declaration-colon-space-after": "always",
+        "declaration-colon-space-before": "never",
+        "function-url-quotes": "always",
+        "indentation": 4,
+        "property-no-vendor-prefix": true,
+        "order/properties-alphabetical-order": true,
+        "selector-class-pattern": ".*",
+        "max-nesting-depth": 4,
+        "selector-max-compound-selectors": 4
+    }
+}

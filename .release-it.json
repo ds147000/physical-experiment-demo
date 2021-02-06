@@ -1,0 +1,8 @@
+{
+    "git": {
+        "changelog": "npm run lint"
+    },
+    "hooks": {
+        "before:git:release": ["npm run lint", "npm run tag"]
+    }
+}

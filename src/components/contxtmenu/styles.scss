@@ -1,0 +1,24 @@
+.context-menu {
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    z-index: 999;
+    border-radius: 4px;
+    box-shadow: 0px 0px 2px #ffffff;
+    overflow: hidden;
+
+    >.item {
+        background-color: #ffffff;
+        width: 80px;
+        font-size: 12px;
+        font-weight: 400;
+        padding: 3px 0px;
+        color: #333333;
+        text-align: center;
+        cursor: pointer;
+
+        &:hover {
+            background-color: rgb(241, 241, 241);
+        }
+    }
+}
