@@ -12,3 +12,7 @@
 
 ## 编译代码
 ``` npm run build ```
+
+## 项目说明
+ - ayout布局使用 `react + andt`
+ - 拖拽画板已`canvas`为渲染基础，使用订阅模式处理重绘和管理
