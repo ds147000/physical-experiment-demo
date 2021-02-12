@@ -31,7 +31,7 @@ export interface MenuListItem {
     config: Config
 }
 
-export const MeunList: MenuListItem[] = [
+export const MenuList: MenuListItem[] = [
     {
         id: 0,
         type: 'line',

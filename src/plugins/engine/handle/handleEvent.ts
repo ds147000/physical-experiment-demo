@@ -1,8 +1,11 @@
-import { ITEM_TYPES, MeunList } from "../../../config/menu"
-import { LienVC, IconVC } from '../scenes'
+import { ITEM_TYPES, MenuList } from "../../../config/menu"
+import { LineVC, IconVC } from '../scenes'
 import { stack, StackItem } from '../stack/stack'
 import { store } from '../../../store'
 
+interface EventHandleFun {
+    (event: MouseEvent): void // eslint-disable-line no-unused-vars
+}
 
 interface HandleEventState {
     activeId: number | null
@@ -18,7 +21,7 @@ const handleProxy: ProxyHandler<HandleEventState> = {
             }
 
             if (val !== null) {
-                MeunList.find(item => {
+                MenuList.find(item => {
                     if (item.id !== val) return false
 
                     const icon = document.createElement('img')
@@ -37,9 +40,13 @@ const handleProxy: ProxyHandler<HandleEventState> = {
     }
 }
 
-class HandleEvent {
+export class HandleEvent {
     private state: HandleEventState = { activeId: null, icon: null }
     private dragItem: StackItem | null = null
+    private _down: EventHandleFun | undefined = undefined
+    private _move: EventHandleFun | undefined = undefined
+    private _up: EventHandleFun | undefined = undefined
+    private _menu: EventHandleFun | undefined = undefined
 
     constructor() {
         this.state = new Proxy(this.state, handleProxy)
@@ -48,15 +55,33 @@ class HandleEvent {
 
     /** 初始化 */
     init(): void {
-        window.addEventListener('mouseup', this.up.bind(this))
-        window.addEventListener('mousemove', this.move.bind(this))
-        window.addEventListener('contextmenu', this.menu.bind(this))
-        window.addEventListener('mousedown', this.down.bind(this))
+        this._down = this.down.bind(this)
+        this._move = this.move.bind(this)
+        this._up = this.up.bind(this)
+        this._menu = this.menu.bind(this)
+
+        window.addEventListener('mousedown', this._down)
+        window.addEventListener('mousemove', this._move)
+        window.addEventListener('mouseup', this._up)
+        window.addEventListener('contextmenu', this._menu)
     }
 
     /** 激活 */
-    setActive(type: number): void {
-        this.state.activeId = type
+    setActive(activeId: number): void {
+        this.state.activeId = activeId
+    }
+
+    getActive(): number | null {
+        return this.state.activeId
+    }
+
+    /** 鼠标按下 */
+    down(event: MouseEvent): void {
+        this.resetEvent()
+        if (event.button !== 0) return
+        const selectItem = LineVC.select(event) || IconVC.select(event)
+
+        this.dragItem = selectItem
     }
 
     /** 鼠标移动 */
@@ -77,39 +102,32 @@ class HandleEvent {
         if (this.state.activeId !== null) {
 
             const { pageX, pageY } = event
-            const inView = LienVC.inViewBox(pageX, pageY) // 判断失去焦点前是否在画布区域内
+            const inView = LineVC.inViewBox(pageX, pageY) // 判断失去焦点前是否在画布区域内
 
             if (inView === false) return
 
-            const stackItem = MeunList.find(item => item.id === this.state.activeId)
+            const stackItem = MenuList.find(item => item.id === this.state.activeId)
             if (stackItem)
                 stack.push(stackItem, pageX - stackItem.config.width / 2, pageY - stackItem.config.height / 2)
 
         }
-
         // 操作画布内元素操作
-        else if (this.dragItem !== null)
-            stack.connceting(this.dragItem.type, this.dragItem.index)
+        else if (this.dragItem !== null && this.dragItem.type === 'line')
+            stack.lienConncetIcon(this.dragItem.index)
 
         this.state.activeId = null
         this.dragItem = null
     }
 
-    down(event: MouseEvent): void {
-        this.resetEvent()
-        if (event.button !== 0) return
-        const selectItem = LienVC.select(event) || IconVC.select(event)
-
-        this.dragItem = selectItem
-    }
-
     /** 鼠标右键 */
     menu(event: MouseEvent): void {
-        const selectItem = LienVC.select(event) || IconVC.select(event)
+        if (event.button !== 2) return
+
+        const selectItem = LineVC.select(event) || IconVC.select(event)
 
         if (selectItem === null) return
 
-        function setSelect(item: StackItem | null): StackItem | null {
+        function setSelect(item: StackItem | undefined): StackItem | undefined {
             if (!item) return item
             item.select = item.index === selectItem?.index && item.id === selectItem.id
             return item
@@ -129,11 +147,11 @@ class HandleEvent {
     }
 
     /** 拖拽元素或者线条 */
-    drag(x: number, y: number, type: ITEM_TYPES) {
+    private drag(x: number, y: number, type: ITEM_TYPES) {
         if (this.dragItem === null || this.dragItem.type !== type) return
 
         const item = stack.getItem(type, this.dragItem.index)
-        if (item === null) {
+        if (item === undefined) {
             this.dragItem = null
             return
         }
@@ -144,7 +162,7 @@ class HandleEvent {
         if (item.connect.length > 0) {
             item.connect.forEach(connecting => {
                 const lineItem = stack.getItem('line', connecting.index)
-                if (lineItem === null) return
+                if (lineItem === undefined) return
 
                 if (connecting.type === 'start') {
                     lineItem.path[0].x += x
@@ -161,21 +179,21 @@ class HandleEvent {
     }
 
     /**
-     * 移动控件
+     * 移动元素
      * @param x
      * @param y
      */
-    moveState(x: number, y: number) {
+    private moveState(x: number, y: number) {
         if (this.state.icon === null) return
         this.state.icon.style.top = y - this.state.icon.offsetHeight / 2 + 'px'
         this.state.icon.style.left = x - this.state.icon.offsetWidth / 2 + 'px'
     }
 
     /** 重置所以事件状态 */
-    resetEvent() {
+    resetEvent(): void {
         if (store.getState().contextmenu.show) store.dispatch.contextmenu.hide()
 
-        function reset(item: StackItem | null): StackItem | null {
+        function reset(item: StackItem | undefined): StackItem | undefined {
             if (item)
                 item.select = false
             return item
@@ -187,9 +205,23 @@ class HandleEvent {
     }
 
     /** 删除某个节点 */
-    delete(index: number) {
-        stack.setItem('icon', index, null)
-        stack.setItem('line', index, null)
+    delete(index: number): void {
+        stack.setItem('icon', index, undefined)
+        stack.setItem('line', index, undefined)
+    }
+
+    /** 销毁 */
+    destroy(): void {
+        this.dragItem = null
+        this.state.activeId = null
+        if (this._down)
+            window.removeEventListener('mousedown', this._down)
+        if (this._move)
+            window.removeEventListener('mousemove', this._move)
+        if (this._up)
+            window.removeEventListener('mouseup', this._up)
+        if (this._menu)
+            window.removeEventListener('contextmenu', this._menu)
     }
 }
 

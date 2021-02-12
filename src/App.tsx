@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import { Provider } from 'react-redux'
 import { Spin } from 'antd'
 import { RendererVC } from './plugins/renderer'
-import { IconVC, LienVC } from './plugins/engine/scenes'
+import { IconVC, LineVC } from './plugins/engine/scenes'
 import { store } from './store'
 import Layout from './components/layout'
 import ContextMenu from './components/contxtmenu'
@@ -20,8 +20,9 @@ const App: React.FC = () => {
         RendererVC.hideLoading = () => setLoading(false)
 
         if (canvasIconRef.current === null || canvasLienRef.current === null) return
+
         IconVC.init(canvasIconRef.current)
-        LienVC.init(canvasLienRef.current)
+        LineVC.init(canvasLienRef.current)
         RendererVC.init(canvasLienRef.current, canvasIconRef.current)
 
     }, [canvasIconRef, canvasLienRef])
@@ -40,7 +41,6 @@ const App: React.FC = () => {
                 </Layout>
             </div>
         </Provider>
-
     )
 }
 

@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react'
-import { Button, Layout } from 'antd'
+import { Button, Layout, Modal } from 'antd'
 import { SaveOutlined, FileTextOutlined, ExclamationCircleOutlined } from '@ant-design/icons'
 import { RendererVC } from '../../plugins/renderer'
 import { stack } from '../../plugins/engine/stack/stack'
@@ -15,14 +15,22 @@ const CLayout: React.FC = ({ children }) => {
     const onCollapse = useCallback(val => setCollapsed(val), [])
 
     const onSave = useCallback(() => {
-        RendererVC.loading()
-
+        Modal.error({
+            title: '提示',
+            content: '保存功能正在开发中...'
+        })
     }, [])
     const onClear = useCallback(() => {
         stack.set('icon', new Array(1000))
         stack.set('line', new Array(1000))
     }, [])
-    const onExport = useCallback(() => {}, [])
+
+    const onExport = useCallback(() => {
+        Modal.error({
+            title: '提示',
+            content: '导出功能正在开发中...'
+        })
+    }, [])
 
     useEffect(() => {
         setTimeout(() => RendererVC.resetSize(), 600)
@@ -32,9 +40,15 @@ const CLayout: React.FC = ({ children }) => {
         <Layout className="layout">
             <Layout >
                 <Header className="header">
-                    <Button type="primary" onClick={onSave} ><SaveOutlined />保存</Button>
-                    <Button type="primary" onClick={onExport} ><FileTextOutlined />导出图片</Button>
-                    <Button danger={true} onClick={onClear} type="primary" ><ExclamationCircleOutlined />清空</Button>
+                    <Button type="primary" onClick={onSave} >
+                        <SaveOutlined />保存
+                    </Button>
+                    <Button type="primary" onClick={onExport} >
+                        <FileTextOutlined />导出图片
+                    </Button>
+                    <Button danger={true} onClick={onClear} type="primary" >
+                        <ExclamationCircleOutlined />清空
+                    </Button>
                 </Header>
                 <Content className="content">
                     {children}

@@ -68,7 +68,7 @@ module.exports = {
         "quotes": [0, "single"],
         "key-spacing": 2,
         "comma-dangle": ["error", "never"],
-        "react-hooks/exhaustive-deps": 0,
+        "react-hooks/exhaustive-deps": 1,
         "no-empty-function": isDebug,
         "react/forbid-prop-types": 0,
         "react/prop-types": 0,

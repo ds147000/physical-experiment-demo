@@ -15,6 +15,7 @@ export const contextmenu = createModel<RootModel>()({
         y: 0,
         selectIndex: null
     } as ShowPayload,
+
     reducers: {
         show(_, payload: ShowPayload) {
             return { ...payload }

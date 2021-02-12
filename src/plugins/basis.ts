@@ -3,6 +3,7 @@
 class RendererBasis {
     loading(): void {}
     hideLoading(): void {}
+
     /** 清空 */
     clear(): void {}
     /** 保存 */

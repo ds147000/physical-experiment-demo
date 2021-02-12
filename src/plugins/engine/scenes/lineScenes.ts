@@ -1,24 +1,17 @@
 import { Scenes } from './scenes'
 import { Point, stack, StackItem } from '../stack/stack'
 
-const lineWidth = 4
+const lineWidth = 6
 const lineJoin = 'round'
 const lineCap = 'round'
 const fillStyle = '#F1EE17'
 const strokeStyle = '#B93629'
 const selectStrokeStyle = '#3D6CF1'
 
-
-interface Rect {
-    x: number
-    y: number
-    width: number
-    height: number
-}
-
-class LineScenes extends Scenes {
+export class LineScenes extends Scenes {
     constructor() {
-        super('line')
+        super()
+        stack.subscription(type => type === 'line' && this.render())
     }
 
     _render(): void {
@@ -89,7 +82,6 @@ class LineScenes extends Scenes {
             }
 
             return false
-
         })
 
         return selectItem || null
@@ -110,6 +102,6 @@ class LineScenes extends Scenes {
     }
 }
 
-const LienVC = new LineScenes
+const LineVC = new LineScenes
 
-export { LienVC }
+export { LineVC }

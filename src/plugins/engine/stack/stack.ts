@@ -30,41 +30,67 @@ export interface StackItem {
     readonly height: number
 }
 
+type TYPE = 'icon' | 'line'
+type ConnectType = 'start' | 'end'
+
 interface emitCallback {
-    (type: ITEM_TYPES): void
+    (type: ITEM_TYPES): void // eslint-disable-line no-unused-vars
 }
 
 interface Connect {
     index: number
-    type: 'start' | 'end'
+    type: ConnectType
+}
+
+export const outputStack = (
+    index: number,
+    id: number,
+    type: TYPE,
+    x: number,
+    y: number,
+    width: number,
+    height: number,
+    points?: Point[]
+): StackItem => {
+    const path: Point[] = type === 'icon' ?
+        [{ x, y }] :
+        [{ x: x, y }, { x: x + width, y }]
+
+    return {
+        index, id,
+        type,
+        select: false,
+        width,
+        height,
+        points,
+        path,
+        connect: []
+    }
 }
 
 class Stack {
-    private lineStack: Array<StackItem | null> = new Array(1000)
-    private iconStack: Array<StackItem | null> = new Array(1000)
+    private lineStack: Array<StackItem | undefined> = new Array(1000)
+    private iconStack: Array<StackItem | undefined> = new Array(1000)
     private len = -1
     private subscriptionList: emitCallback[] = []
 
-    push(data: MenuListItem, x: number, y: number): void {
-        this.len ++
+    push(data: MenuListItem, x: number, y: number): number {
+        this.len++
         if (this.len >= this.lineStack.length) this.double()
 
         const { type, config, url, id } = data
-        const path: Point[] = type === 'icon' ?
-            [{ x, y }] :
-            [{ x: x, y }, { x: x + config.width, y }]
 
-        const item: StackItem = {
-            index: this.len,
+
+        const item: StackItem = outputStack(
+            this.len,
             id,
-            type: type,
-            select: false,
-            width: config.width,
-            height: config.height,
-            points: config.points,
-            connect: [],
-            path
-        }
+            type,
+            x,
+            y,
+            config.width,
+            config.height,
+            config.points
+        )
 
         if (type === 'icon')
             this.iconStack[this.len] = { ...item, url }
@@ -72,6 +98,7 @@ class Stack {
             this.lineStack[this.len] = item
 
         this.emit(type)
+        return this.len
     }
 
     /**
@@ -79,7 +106,7 @@ class Stack {
      * @param type
      * @param data
      */
-    set(type: ITEM_TYPES, data: Array<StackItem | null>) {
+    set(type: ITEM_TYPES, data: Array<StackItem | undefined>) {
         if (type === 'icon')
             this.iconStack = data
         else if (type === 'line')
@@ -91,7 +118,7 @@ class Stack {
      * 获取栈
      * @param type
      */
-    get(type: ITEM_TYPES): Array<StackItem | null> {
+    get(type: ITEM_TYPES): Array<StackItem | undefined> {
         return type === 'icon' ? this.iconStack : this.lineStack
     }
 
@@ -100,7 +127,7 @@ class Stack {
      * @param type
      * @param index
      */
-    getItem(type: ITEM_TYPES, index: number): StackItem | null {
+    getItem(type: ITEM_TYPES, index: number): StackItem | undefined {
         return type === 'icon' ? this.iconStack[index] : this.lineStack[index]
     }
 
@@ -109,7 +136,7 @@ class Stack {
      * @param type
      * @param index
      */
-    setItem(type: ITEM_TYPES, index: number, item: StackItem | null): void {
+    setItem(type: ITEM_TYPES, index: number, item: StackItem | undefined): void {
         if (index >= this.iconStack.length) this.double()
         if (type === 'icon')
             this.iconStack[index] = item
@@ -120,23 +147,12 @@ class Stack {
         this.emit(type)
     }
 
-    /** 链接成员 */
-    connceting(type: ITEM_TYPES, index: number) {
-        const item =  this.getItem(type, index)
-        if (item === null) return
-
-        if (!item.points) return
-
-        if (type === 'line')
-            this.lienConncetIcon(index)
-    }
-
     /**
      * 线段链接元素
      * @param start
      * @param end
      */
-    lienConncetIcon(index: number) {
+    lienConncetIcon(index: number): void {
         let startStatus = false, endStatus = false
 
         const newIconSatck = this.get('icon').map(item => {
@@ -146,7 +162,7 @@ class Stack {
 
             if (startStatus && endStatus) return item
 
-            for(let i = 0; i < item.points.length; i ++) {
+            for (let i = 0; i < item.points.length; i++) {
                 let { x, y } = item.points[i]
                 x += item.path[0].x
                 y += item.path[0].y
@@ -168,10 +184,10 @@ class Stack {
         this.set('icon', newIconSatck)
     }
 
-    lineConnectIconCall(index: number, type: 'start' | 'end', x: number, y: number): boolean {
+    lineConnectIconCall(index: number, type: ConnectType, x: number, y: number): boolean {
         const radius = 10
         const item = this.getItem('line', index) as StackItem
-        const cPath = type === 'start' ? item.path[0] : item.path[item.path.length -1]
+        const cPath = type === 'start' ? item.path[0] : item.path[item.path.length - 1]
 
         if (Math.abs(cPath.x - x) < radius && Math.abs(cPath.y - y) < radius) {
             if (type === 'start') item.path[0] = { x, y }

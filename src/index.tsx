@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import React from 'react'
 import ReactDOM from 'react-dom'
 import './index.css'
@@ -12,7 +13,7 @@ ReactDOM.render(
 )
 
 console.log('%c hello，此demo代码仅做演示作用，请勿做商业用途～', 'color: red')
-console.log('%c 本人正在寻找好的工作机会中～如果有意请联系我的邮箱yangzhoulong@icloud.com 或 微信 ds147000', 'color: green')
+console.log('%c 如果您有好的功能和设计想法请联系我的邮箱yangzhoulong@icloud.com 或 微信 ds147000', 'color: green')
 
 
 

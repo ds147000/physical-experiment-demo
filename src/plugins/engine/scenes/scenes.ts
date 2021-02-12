@@ -1,6 +1,4 @@
-import { resourceUsage } from "process"
-import { ITEM_TYPES } from "../../../config/menu"
-import { stack, StackItem } from "../stack/stack"
+import { StackItem } from "../stack/stack"
 
 interface Point {
     readonly x: number
@@ -15,22 +13,14 @@ interface Rect {
     readonly radius?: number
 }
 
-interface Triangle {
-    a: Point,
-    b: Point,
-    c: Point
-}
-
 class Scenes {
     public Canvas: HTMLCanvasElement | null = null
     public Content: CanvasRenderingContext2D | null = null
     private materialCache: Record<string, HTMLImageElement> = {}
 
-    constructor(type: ITEM_TYPES) {
-        stack.subscription(value => value === type && this.render())
-    }
-
     init(Canvas: HTMLCanvasElement): void {
+        if (Canvas.tagName !== 'CANVAS') return
+
         this.Content = Canvas.getContext('2d')
         this.Canvas = Canvas
     }
@@ -60,7 +50,7 @@ class Scenes {
     inBox(point: Point, rect: Rect): boolean {
         const { x, y } = point
         if (rect.radius !== undefined)
-            return false
+            return Math.abs(x - rect.x) < rect.radius && Math.abs(y - rect.y) < rect.radius
 
         else if (rect.width !== undefined && rect.height !== undefined) {
             const inX = rect.x <= x && x <= (rect.x + rect.width)
@@ -121,7 +111,7 @@ class Scenes {
                     // 得到 A点向左射线与边的交点的x坐标：
                     dLon = dLon1 - ((dLon1 - dLon2) * (dLat1 - ALat)) / (dLat1 - dLat2)
                     if (dLon < ALon)
-                        result ++
+                        result++
                 }
             }
         }
@@ -152,12 +142,12 @@ class Scenes {
                 y: end.y - yWidth
             },
             {
-                x: end.x + xWidth * 2,
-                y: end.y + yWidth * 2
+                x: end.x + xWidth,
+                y: end.y + yWidth
             },
             {
-                x: start.x + xWidth * 2,
-                y: start.y + yWidth * 2
+                x: start.x + xWidth,
+                y: start.y + yWidth
             }
         ]
     }
@@ -167,7 +157,8 @@ class Scenes {
      * @param start
      * @param end
      */
-    getAngle(start: Point, end: Point) {
+    getAngle(start: Point, end: Point): number {
+        if (start.y === end.y && end.x < start.x) return 180
         const x = end.x - start.x
         const y = end.y - start.y
         const k = y / x
@@ -180,15 +171,21 @@ class Scenes {
      * @param url
      */
     getMaterial(id: number, url: string): Promise<HTMLImageElement> {
-        return new Promise(res => {
+        return new Promise((res) => {
             const cache = this.materialCache[String(id)]
             if (cache) res(cache)
 
             const img = new Image()
+
             img.onload = () => {
                 this.materialCache[String(id)] = img
                 res(img)
             }
+
+            img.onerror = () => {
+                res(img)
+            }
+
             img.src = url
         })
     }
@@ -200,9 +197,9 @@ class Scenes {
      * @param width
      * @param height
      */
-    getPoint(x: number, y: number, width?: number, height?: number) {
+    getPoint(x: number, y: number, width?: number, height?: number): Rect {
         const result = { x, y, width, height }
-        result.y -= 60
+        result.y = y > 60 ? y - 60 : 0
 
         return result
     }
@@ -213,7 +210,7 @@ class Scenes {
     }
 
     /** 是否选中对象 */
-    select(event: MouseEvent): StackItem | null {
+    select(event: MouseEvent): StackItem | null { // eslint-disable-line @typescript-eslint/no-unused-vars,no-unused-vars
         // coding...
         return null
     }

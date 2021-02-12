@@ -1,9 +1,10 @@
 import { Scenes } from './scenes'
 import { stack, StackItem } from '../stack/stack'
 
-class IconScenes extends Scenes {
+export class IconScenes extends Scenes {
     constructor() {
-        super('icon')
+        super()
+        stack.subscription(type => type === 'icon' && this.render())
     }
 
     _render(): void {
@@ -13,7 +14,7 @@ class IconScenes extends Scenes {
         stack.get('icon').forEach(async item => {
             if (!item || this.Content === null) return
 
-            const { path, connect } = item
+            const { path } = item
             if(item.select === true) { // 激活状态
                 const rectSize = this.getPoint(
                     path[0].x - 10,

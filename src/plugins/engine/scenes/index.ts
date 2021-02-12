@@ -1,2 +1,2 @@
-export { LienVC } from './lineScenes'
+export { LineVC } from './lineScenes'
 export { IconVC } from './iconScenes'

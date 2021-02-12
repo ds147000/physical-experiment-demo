@@ -1,5 +1,5 @@
 import RendererBasis from './basis'
-import { LienVC, IconVC } from './engine/scenes'
+import { LineVC, IconVC } from './engine/scenes'
 
 
 class Renderer extends RendererBasis {
@@ -30,7 +30,7 @@ class Renderer extends RendererBasis {
      * @param width
      * @param height
      */
-    private setSize(canvas: HTMLCanvasElement[], width: number, height: number) {
+    setSize(canvas: HTMLCanvasElement[], width: number, height: number) {
         canvas.map(item => {
             item.width = width
             item.height = height
@@ -38,8 +38,8 @@ class Renderer extends RendererBasis {
     }
 
     /** 输出 */
-    public render(): void {
-        LienVC.render()
+    render(): void {
+        LineVC.render()
         IconVC.render()
     }
 }
