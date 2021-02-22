@@ -11,8 +11,8 @@ class RendererBasis {
         return Promise.resolve(true)
     }
     /** 导出 */
-    export(): Promise<boolean> {
-        return Promise.resolve(true)
+    export(): Promise<string> {
+        return Promise.resolve('')
     }
 }
 

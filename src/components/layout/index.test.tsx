@@ -38,6 +38,7 @@ describe('test the Laytou.tex 测试Layout组件', () => {
 
         const exprotButton = renderer.getByText('导出图片')
         expect(exprotButton).toBeTruthy()
+        fireEvent.click(exprotButton)
     })
 
     test('收起菜单功能', async () => {

@@ -15,12 +15,12 @@ export class IconScenes extends Scenes {
             if (!item || this.Content === null) return
 
             const { path } = item
-            if(item.select === true) { // 激活状态
+            if(item.select === true || item.hover === true) { // 激活状态
                 const rectSize = this.getPoint(
-                    path[0].x - 10,
-                    path[0].y - 10,
-                    item.width + 20,
-                    item.height + 20
+                    path[0].x - 7,
+                    path[0].y - 7,
+                    item.width + 14,
+                    item.height + 14
                 )
                 this.Content.fillStyle = 'rgba(255, 255, 255, 0.4)'
                 this.Content.fillRect(rectSize.x, rectSize.y, rectSize.width as number, rectSize.height as number)

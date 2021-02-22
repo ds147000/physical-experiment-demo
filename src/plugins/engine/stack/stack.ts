@@ -6,6 +6,8 @@ export interface Point {
 }
 
 export interface StackItem {
+    /** @public 是否预览状态 */
+    hover: boolean,
     /** @public 选择状态 */
     select: boolean
     /** @public 路径点 */
@@ -60,6 +62,7 @@ export const outputStack = (
         index, id,
         type,
         select: false,
+        hover: false,
         width,
         height,
         points,

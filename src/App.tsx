@@ -6,6 +6,7 @@ import { IconVC, LineVC } from './plugins/engine/scenes'
 import { store } from './store'
 import Layout from './components/layout'
 import ContextMenu from './components/contxtmenu'
+// import Magnifier from './components/magnifier'
 import './App.scss'
 
 const App: React.FC = () => {
@@ -27,10 +28,13 @@ const App: React.FC = () => {
 
     }, [canvasIconRef, canvasLienRef])
 
+    // const onChange = useCallback((val: number) => RendererVC.sacle(val), [])
+
     return (
         <Provider store={store} >
             <div className="App">
                 <ContextMenu />
+                {/* <Magnifier min={0} max={200} defaultValue={100} onChange={onChange} /> */}
                 <Layout>
                     <Spin spinning={loading} >
                         <div className="canvas">

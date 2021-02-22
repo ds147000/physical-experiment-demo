@@ -1,4 +1,5 @@
 import { StackItem } from "../stack/stack"
+import { SchedulerController } from '../scheduler'
 
 interface Point {
     readonly x: number
@@ -16,7 +17,8 @@ interface Rect {
 class Scenes {
     public Canvas: HTMLCanvasElement | null = null
     public Content: CanvasRenderingContext2D | null = null
-    private materialCache: Record<string, HTMLImageElement> = {}
+    public scale = 1
+    private materialCache: Record<string, ImageBitmap> = {}
 
     init(Canvas: HTMLCanvasElement): void {
         if (Canvas.tagName !== 'CANVAS') return
@@ -170,21 +172,34 @@ class Scenes {
      * @param id
      * @param url
      */
-    getMaterial(id: number, url: string): Promise<HTMLImageElement> {
+    getMaterial(id: number, url: string): Promise<ImageBitmap> {
         return new Promise((res) => {
+
             const cache = this.materialCache[String(id)]
-            if (cache) res(cache)
+            if (cache) {
+                res(cache)
+                return
+            }
 
             const img = new Image()
 
-            img.onload = () => {
-                this.materialCache[String(id)] = img
-                res(img)
+            async function onError() {
+                const data = new ImageData(0, 0)
+                const imgBitMap = await createImageBitmap(data)
+                res(imgBitMap)
             }
 
-            img.onerror = () => {
-                res(img)
+            img.onload = async () => {
+                try {
+                    const imgBitMap = await createImageBitmap(img)
+                    this.materialCache[String(id)] = imgBitMap
+                    res(imgBitMap)
+                } catch (error) {
+                    onError()
+                }
             }
+
+            img.onerror = onError
 
             img.src = url
         })
@@ -200,7 +215,10 @@ class Scenes {
     getPoint(x: number, y: number, width?: number, height?: number): Rect {
         const result = { x, y, width, height }
         result.y = y > 60 ? y - 60 : 0
-
+        result.y *= this.scale
+        result.x *= this.scale
+        if (result.width) result.width *= this.scale
+        if (result.height) result.height *= this.scale
         return result
     }
 
@@ -216,7 +234,8 @@ class Scenes {
     }
 
     render(): void {
-        window.requestAnimationFrame(this._render.bind(this))
+        // window.requestAnimationFrame(() => this._render())
+        SchedulerController.run(() => this._render())
     }
 
     _render(): void {

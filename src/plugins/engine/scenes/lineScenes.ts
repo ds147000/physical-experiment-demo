@@ -6,7 +6,6 @@ const lineJoin = 'round'
 const lineCap = 'round'
 const fillStyle = '#F1EE17'
 const strokeStyle = '#B93629'
-const selectStrokeStyle = '#3D6CF1'
 
 export class LineScenes extends Scenes {
     constructor() {
@@ -21,13 +20,21 @@ export class LineScenes extends Scenes {
             if (!item || this.Content === null) return
 
             this.Content.beginPath()
+            this.Content.shadowBlur = 0
+            this.Content.shadowOffsetX = 0
+            this.Content.shadowOffsetY = 0
             this.Content.fillStyle = fillStyle
             this.Content.strokeStyle = strokeStyle
             this.Content.lineWidth = lineWidth
             this.Content.lineJoin = lineJoin
             this.Content.lineCap = lineCap
-            if(item.select === true)
-                this.Content.strokeStyle = selectStrokeStyle
+
+            if (item.hover === true || item.select === true) {
+                this.Content.shadowBlur = 20
+                this.Content.shadowColor = this.Content.strokeStyle
+                this.Content.shadowOffsetX = 2
+                this.Content.shadowOffsetY = 2
+            }
 
             // 绘制线条
             const { path } = item
@@ -52,7 +59,12 @@ export class LineScenes extends Scenes {
 
     }
 
-    select(event: MouseEvent): StackItem | null {
+    /**
+     * 是否选择线段
+     * @param event
+     * @param seletcPath 是否记录选择的路径
+     */
+    select(event: MouseEvent, seletcPath = true): StackItem | null {
         const point = this.getPoint(event.pageX, event.pageY)
 
         const selectItem = stack.get('line').find(item => {
@@ -74,11 +86,12 @@ export class LineScenes extends Scenes {
                 const vert = this.LienToVert(start, end, lineWidth * 1.5)
                 const isVert = this.inVertBox(point, vert)
 
-                if (isVert) {
+                if (isVert && seletcPath) {
                     item.path.splice(i, 0, { x: event.pageX, y: event.pageY })
                     item.selectPathIndex = i
                     return true
-                }
+                } else if (isVert)
+                    return true
             }
 
             return false

@@ -1,6 +1,7 @@
+jest.mock('./engine/scheduler')
 import { RendererVC } from './renderer'
 import { LineVC, IconVC } from './engine/scenes'
-
+import 'jest-canvas-mock'
 
 describe('test RendererVC', () => {
     const canvasLine = document.createElement('canvas')
@@ -59,5 +60,28 @@ describe('test RendererVC', () => {
 
         expect(IconVC.render).toHaveBeenCalledTimes(1)
         expect(LineVC.render).toHaveBeenCalledTimes(1)
+    })
+
+    test('export', async () => {
+        const url = await RendererVC.export()
+        expect(/base64/.test(url)).toBe(true)
+    })
+
+    test('change Scale to 100%', () => {
+        RendererVC.sacle(100)
+        expect(LineVC.scale).toBe(1)
+        expect(IconVC.scale).toBe(1)
+    })
+
+    test('change Scale to 0%', () => {
+        RendererVC.sacle(0)
+        expect(LineVC.scale).toBe(0.2)
+        expect(IconVC.scale).toBe(0.2)
+    })
+
+    test('change Scale to 0%', () => {
+        RendererVC.sacle(200)
+        expect(LineVC.scale).toBe(2)
+        expect(IconVC.scale).toBe(2)
     })
 })

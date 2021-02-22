@@ -99,11 +99,12 @@ describe('test class the Scenes', () => {
     })
 
     describe.each([
-        [10, 100, 0, 0, { x: 10, y: 40, width: 0, height: 0 }],
-        [80, 50, 0, 0, { x: 80, y: 0, width: 0, height: 0 }],
-        [0, 150, 60, 20, { x: 0, y: 90, width: 60, height: 20 }],
-        [30, 200, 60, 20, { x: 30, y: 140, width: 60, height: 20 }]
-    ])('test getPoint 获取正确的坐标与宽高', (x, y, w, h, expected) => {
+        [10, 100, 0, 0, 1, { x: 10, y: 40, width: 0, height: 0 }],
+        [80, 50, 0, 0, 1, { x: 80, y: 0, width: 0, height: 0 }],
+        [0, 150, 60, 20, 1, { x: 0, y: 90, width: 60, height: 20 }],
+        [30, 200, 60, 20, 1, { x: 30, y: 140, width: 60, height: 20 }],
+    ])('test getPoint 获取正确的坐标与宽高', (x, y, w, h, scale, expected) => {
+        scenes.scale = scale
         expect(scenes.getPoint(x, y, w, h)).toStrictEqual(expected)
     })
 

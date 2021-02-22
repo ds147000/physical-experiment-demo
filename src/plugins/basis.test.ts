@@ -28,6 +28,6 @@ describe('test the Classs of RenderBasis', () => {
 
     test('test export fun', async () => {
         const result = await basis.export()
-        expect(result).toBe(true)
+        expect(result).toBe('')
     })
 })
