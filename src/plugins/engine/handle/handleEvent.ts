@@ -97,7 +97,6 @@ export class HandleEvent {
             SchedulerController.run(() => this.drag(event.movementX, event.movementY, 'line'))
 
         else {
-
             SchedulerController.runSingleIdle(() => {
                 function reset(item: StackItem | undefined): StackItem | undefined {
                     if (item) item.hover = false

@@ -3,9 +3,9 @@
  * 任务调度器，控制一帧内执行合适的任务
  */
 
- interface Fun {
+interface Fun {
     (): void
- }
+}
 
 interface StackFun {
     type: 0 | 1 | 2
@@ -88,26 +88,23 @@ export class Scheduler {
             requestAnimationFrame(() => this.runing())
             return Promise.resolve()
         }
-        // 执行任务
         this.runtingStatus = true
+
         const start = Date.now()
-        return new Promise(async (res) => { // eslint-disable-line no-async-promise-executor
-            const result = await stackFun.fun()
-            const end = Date.now()
-            res(result)
-            this.getNewRuntime(end - start)
-            switch(stackFun.type) {
-                case 0:
-                    this.singleIdel[stackFun.id as string] = undefined
-                break
-                case 1:
-                    this.runIdelStack.shift()
-                break
-                default:
-                    this.runStack.shift()
-            }
-            this.runing()
-        })
+        await stackFun.fun()
+        switch(stackFun.type) {
+            case 0:
+                this.singleIdel[stackFun.id as string] = undefined
+            break
+            case 1:
+                this.runIdelStack.shift()
+            break
+            default:
+                this.runStack.shift()
+        }
+        this.getNewRuntime(Date.now() - start)
+        this.runing()
+        return Promise.resolve()
     }
 
     /**
