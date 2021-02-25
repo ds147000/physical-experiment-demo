@@ -89,6 +89,7 @@ export class HandleEvent {
         if (this.state.icon) // 放置元素
             SchedulerController.run(() => this.moveState(event.pageX, event.pageY))
 
+
         else if (this.dragItem?.type === 'icon') // 拖动物件
             SchedulerController.run(() => this.drag(event.movementX, event.movementY, 'icon'))
 
@@ -96,7 +97,7 @@ export class HandleEvent {
         else if (this.dragItem?.type === 'line') // 拖动跳线
             SchedulerController.run(() => this.drag(event.movementX, event.movementY, 'line'))
 
-        else {
+        else { // hover 效果
             SchedulerController.runSingleIdle(() => {
                 function reset(item: StackItem | undefined): StackItem | undefined {
                     if (item) item.hover = false

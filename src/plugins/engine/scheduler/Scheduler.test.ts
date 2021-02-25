@@ -1,5 +1,4 @@
-import { waitFor } from '@testing-library/react'
-import { Scheduler, SchedulerController } from './index'
+import { Scheduler } from './Scheduler'
 
 test('test Scheduler run 1 stack', () => {
     const SchedulerController = new Scheduler
@@ -107,6 +106,7 @@ test('test Schedule runSingleIdle 1 the stack', () => {
 })
 
 test('test Schedule runSingleIdel and run and runIdle', () => {
+    const SchedulerController = new Scheduler
     const runSub = jest.fn(() => Date.now())
     const idleSub = jest.fn(() => Date.now())
     const singleSub = jest.fn(() => Date.now())
@@ -132,7 +132,3 @@ test('test Schedule runSingleIdel and run and runIdle', () => {
 
 })
 
-test('test error stack', async () => {
-    const fun = jest.fn(() => Promise.reject('100'))
-    SchedulerController.run(fun)
-})
