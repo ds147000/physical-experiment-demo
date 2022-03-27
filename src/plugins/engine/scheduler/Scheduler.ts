@@ -38,7 +38,7 @@ export class Scheduler {
     run(cb: any): void {
         if (this.runStackIndex > this.runSatckLen -1) {
             this.runSatckLen += 1000
-            this.runStack = this.runStack.concat(new Array(1000))
+            this.runStack.length = this.runSatckLen
         }
 
         this.runStackIndex ++
@@ -54,7 +54,7 @@ export class Scheduler {
     runIdle(cb: any): void {
         if (this.runIdelStackIndex > this.runIdelStackLen -1) {
             this.runIdelStackLen += 1000
-            this.runIdelStack = this.runIdelStack.concat(new Array(1000))
+            this.runIdelStack.length = this.runIdelStackLen
         }
 
         this.runIdelStackIndex ++
